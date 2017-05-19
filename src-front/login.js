@@ -1,14 +1,18 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
-export default class extends React.Component {
+import {login} from './actions';
+
+export default connect(state => state)(class extends React.Component {
 	constructor(props) {
 		super(props);
 		this.onSubmit = this.onSubmit.bind(this);
 	}
 	
 	onSubmit() {
-		console.log(this._inputUsername.value);
-		console.log(this._inputPassword.value);
+		this.props.dispatch(
+			login(this._inputUsername.value, this._inputPassword.value)
+		);
 	}
 	
 	render() {
@@ -36,4 +40,4 @@ export default class extends React.Component {
 			</div>
 		);
 	}
-}
+})

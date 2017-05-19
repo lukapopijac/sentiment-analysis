@@ -1,34 +1,34 @@
 export function login(username, password) {
 	return function(dispatch) {
-		setTimeout(function() {
-			if(username=='a') {
+		axios.post('/api/login', {username, password})
+			.then(function(user) {
 				dispatch({
-					type: 'LOGIN_FULFILLED'
+					type: 'LOGIN_FULFILLED',
+					payload: user
 				});
-			} else {
-				dispatch({
-					type: 'LOGIN_REJECTED'
-				});				
-			}
-		}, 500);
-	}
+			})
+			.catch(_ => dispatch({type: 'LOGIN_REJECTED'}))
+		;
+	};
 }
 
 export function logout() {
-	return {
-		type: 'LOGOUT'
-	}
+	return function(dispatch) {
+		axios.get('/api/logout')
+			.then(_ => dispatch({type: 'LOGOUT_FULFILLED'}))
+			.catch(_ => dispatch({type: 'LOGOUT_REJECTED'}))
+		;
+	};
 }
 
 export function getDashboard() {
 	return function(dispatch) {
 		setTimeout(function() {
 			dispatch({
-				type: 'GET_DASHBOARD',
+				type: 'GET_DASHBOARD_FULFILLED',
 				payload: {
 					user: {
 						name: 'Mister Head',
-						role: 'head',
 						avgSentiment: 6.4
 					},
 					journalEntries: [

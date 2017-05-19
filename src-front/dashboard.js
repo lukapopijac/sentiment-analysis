@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import Journal from './journal';
-import {getDashboard} from './actions';
+import {getDashboard, logout} from './actions';
 
 export default connect(state => state)(class extends React.Component {
 	constructor(props) {
@@ -15,7 +15,7 @@ export default connect(state => state)(class extends React.Component {
 	}
 	
 	logOut() {
-		console.log('logout');
+		this.props.dispatch(logout());
 	}
 	
 	render() {

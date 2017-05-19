@@ -1,16 +1,22 @@
 export default function(state={}, action) {
 	switch(action.type) {
-		case 'GET_DASHBOARD':
-			return Object.assign({}, state, {
-				user: action.payload.user,
-				journalEntries: action.payload.journalEntries
-			})
-			
+		case 'LOGIN_FULFILLED':
+			return {
+				user: action.payload
+			};
+		case 'LOGIN_REJECTED':
+			// handle error
+			console.log('LOGIN_REJECTED');
+			break;
+		
+		case 'LOGOUT_FULFILLED':
+			return {};
+						
 		case 'GET_DASHBOARD_FULFILLED':
 			return Object.assign({}, state, {
 				user: action.payload.user,
 				journalEntries: action.payload.journalEntries
-			})
+			});
 		
 		case 'GET_DASHBOARD_REJECTED':
 			// handle error
