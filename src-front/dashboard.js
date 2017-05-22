@@ -23,7 +23,7 @@ export default connect(state => state)(class extends React.Component {
 		let name = user ? user.name : '';
 		let avgSentiment = user ? user.avgSentiment : null;
 		
-		return (
+		return !user ? <div></div>: (
 			<div>
 				<br/>
 				<button type="button" className="btn btn-default pull-right" onClick={this.logOut}>Log Out</button>

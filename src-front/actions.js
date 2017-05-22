@@ -1,12 +1,7 @@
 export function login(username, password) {
 	return function(dispatch) {
 		axios.post('/api/login', {username, password})
-			.then(function(user) {
-				dispatch({
-					type: 'LOGIN_FULFILLED',
-					payload: user
-				});
-			})
+			.then(_ => dispatch({type: 'LOGIN_FULFILLED'}))
 			.catch(_ => dispatch({type: 'LOGIN_REJECTED'}))
 		;
 	};
@@ -14,7 +9,7 @@ export function login(username, password) {
 
 export function logout() {
 	return function(dispatch) {
-		axios.get('/api/logout')
+		axios.post('/api/logout')
 			.then(_ => dispatch({type: 'LOGOUT_FULFILLED'}))
 			.catch(_ => dispatch({type: 'LOGOUT_REJECTED'}))
 		;
@@ -23,59 +18,30 @@ export function logout() {
 
 export function getDashboard() {
 	return function(dispatch) {
-		setTimeout(function() {
-			dispatch({
-				type: 'GET_DASHBOARD_FULFILLED',
-				payload: {
-					user: {
-						name: 'Mister Head',
-						avgSentiment: 6.4
-					},
-					journalEntries: [
-						{
-							id: 324653,
-							datetime: '2017-05-12T22:34:46.927Z',
-							happinessLevel: 7,
-							text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut dolor metus, fermentum a condimentum auctor.'
-						},
-						{
-							id: 243357,
-							datetime: '2017-05-12T22:36:34.108Z',
-							happinessLevel: -3,
-							text: 'Phasellus condimentum lectus id dolor luctus rutrum.'
-						}
-					]
-				}
-			});
-		}, 500);
-	};
-}
-
-export function getAverageSentiment() {
-	return function(dispatch) {
-		setTimeout(function() {
-			dispatch({
-				type: 'GET_AVERAGE_SENTIMENT_FULFILLED',
-				payload: 5.4				
-			});
-		}, 500);
+		axios.get('/api/dashboard')
+			.then(function(response) {
+				dispatch({
+					type: 'GET_DASHBOARD_FULFILLED',
+					payload: response.data
+				});
+			})
+			.catch(_ => dispatch({type: 'GET_DASHBOARD_REJECTED'}))
+		;
 	};
 }
 
 export function saveJournalEntry(journalEntry, cb) {
 	return function(dispatch) {
-		setTimeout(function() {
-			dispatch({
-				type: 'SAVE_JOURNAL_ENTRY_FULFILLED',
-				payload: {
-					id: (100000*Math.random())|0,
-					datetime: '2017-05-13T11:36:34.108Z',
-					happinessLevel: journalEntry.happinessLevel,
-					text: journalEntry.text
-				}
-			});
-			cb();
-		}, 1000);
+		axios.post('/api/journal-entries', journalEntry)
+			.then(function(response) {
+				dispatch({
+					type: 'SAVE_JOURNAL_ENTRY_FULFILLED',
+					payload: response.data
+				});
+				cb();
+			})
+			.catch(_ => dispatch({type: 'SAVE_JOURNAL_ENTRY_REJECTED'}))
+		;
 	};
 }
 
@@ -92,3 +58,14 @@ export function closeNewJournalEntryModal() {
 		payload: false
 	}
 }
+
+//export function getAverageSentiment() {
+//	return function(dispatch) {
+//		setTimeout(function() {
+//			dispatch({
+//				type: 'GET_AVERAGE_SENTIMENT_FULFILLED',
+//				payload: 5.4				
+//			});
+//		}, 500);
+//	};
+//}

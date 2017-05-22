@@ -2,32 +2,32 @@
 
 const mongoose = require('mongoose');
 
-let familiesSchema = new mongoose.Schema({
+let familySchema = new mongoose.Schema({
     name: String,
 });
 
-let usersSchema = new mongoose.Schema({
-    name: String,
+let userSchema = new mongoose.Schema({
     username: String,
     password: String,
+    name: String,
+	head: Boolean,
     family: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Families'
+        ref: 'Family'
     }
 });
 
-
-let journalEntriesSchema = new mongoose.Schema({
+let journalEntrySchema = new mongoose.Schema({
 	datetime: String,
     text: String,
 	happinessLevel: Number,
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users'
+        ref: 'User'
     }
 });
 
 
-mongoose.model("Families", familiesSchema);
-mongoose.model("Users", usersSchema);
-mongoose.model("JournalEntries", journalEntriesSchema);
+mongoose.model("Family", familySchema);
+mongoose.model("User", userSchema);
+mongoose.model("JournalEntry", journalEntrySchema);

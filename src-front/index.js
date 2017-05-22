@@ -11,7 +11,7 @@ let App = connect(state => state)(class extends React.Component {
 	render() {
 		return (
 			<div className="container">
-				{this.props.user ? <Dashboard/> : <Login/>}
+				{this.props.unauthorized ? <Login/> : <Dashboard/>}
 			</div>
 		); 
 	}

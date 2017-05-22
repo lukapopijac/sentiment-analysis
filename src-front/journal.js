@@ -32,7 +32,7 @@ export default connect(state => state)(class extends React.Component {
 						</thead>
 						<tbody>	
 							{this.props.journalEntries.map(rec=>(
-								<tr key={rec.id}>
+								<tr key={rec._id}>
 									<td className="col-sx-3">{new Date(rec.datetime).toLocaleString()}</td>
 									<td className="col-sx-3">{rec.happinessLevel}</td>
 									<td className="col-sx-6">{rec.text}</td>

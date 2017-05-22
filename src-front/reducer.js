@@ -1,17 +1,15 @@
 export default function(state={}, action) {
 	switch(action.type) {
 		case 'LOGIN_FULFILLED':
-			return {
-				user: action.payload
-			};
+			return {};
+		
 		case 'LOGIN_REJECTED':
 			// handle error
-			console.log('LOGIN_REJECTED');
-			break;
+			return {unauthorized: true};
 		
 		case 'LOGOUT_FULFILLED':
-			return {};
-						
+			return {unauthorized: true};
+		
 		case 'GET_DASHBOARD_FULFILLED':
 			return Object.assign({}, state, {
 				user: action.payload.user,
@@ -20,28 +18,17 @@ export default function(state={}, action) {
 		
 		case 'GET_DASHBOARD_REJECTED':
 			// handle error
-			break;
-
-		case 'GET_AVERAGE_SENTIMENT_FULFILLED':
-			return {
-				user: Object.assign({}, state.user, {averageSentiment: action.payload}),
-				journalEntries: state.journalEntries
-			};
-		
-		case 'GET_AVERAGE_SENTIMENT_REJECTED':
-			// handle error
-			break;
+			return {unauthorized: true};
 		
 		case 'SAVE_JOURNAL_ENTRY_FULFILLED':
-			return {
-				user: state.user,
+			return Object.assign({}, state, {
 				journalEntries: state.journalEntries.concat([action.payload])
-			};
+			});
 		
 		case 'SAVE_JOURNAL_ENTRY_REJECTED':
 			// handle error
 			break;
-			
+		
 		case 'JOURNAL_ENTRY_MODAL_ACTIVE':
 			return Object.assign({}, state, {
 				journalEntryModalActive: action.payload

@@ -10,12 +10,28 @@ const publicDir = require('path').join(__dirname, 'dist');
 const port = process.env.PORT || 3000;
 
 
-// set up passport
+// database
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/sentimentdb');
+require('./src-back/db-models');
+let JournalEntryModel = mongoose.model('JournalEntry');
+var FamilyModel = mongoose.model('Family');
+var UserModel = mongoose.model('User');
+
+
+// authentication
 passport.use(new LocalStrategy(
 	function(username, password, done) {
-		if(username=='abc') done(null, {us: 'ABC'});
-		else if(username=='def') done(null, {us: 'DEF'});
-		else done(null, false, 'krivo!');
+		UserModel.findOne({username, password}, function(err, user) {
+			if(user) return done(null, {
+				name: user.name, 
+				head: user.head,
+				_id: user._id, 
+				family: user.family
+			});
+			return done(null, false, 'Unable to login');
+		});
 	}
 ));
 passport.serializeUser(function(user, done) {
@@ -24,16 +40,10 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
 	done(null, user);
 });
-
 function authenticationMiddleware(req, res, next) {
 	if(req.isAuthenticated()) next();
-	else res.send(401);
+	else res.sendStatus(401);
 }
-
-// database connect
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/jdbsentimentdb');
-require('./src-back/db-models');
 
 
 // server
@@ -45,43 +55,55 @@ app.use(session({secret: 'something secret'}));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/api', routes);
+
 
 app.post('/api/login', passport.authenticate('local'), function(req, res, next) {
-	console.log('login: ', req.user);
 	res.json(req.user);
 });
-
-app.get('/api/logout', function(req, res) {
+app.post('/api/logout', function(req, res) {
 	req.logOut();
-	res.send(200);
+	res.sendStatus(200);
 });
 
 
-let sendErrorResponse = function(next, status, msg) {
-	let error = new Error();
-	error.status = status;
-	error.message = "Executing call to /apartments. " + msg;
-	next(error);
-};
+app.get('/api/dashboard', authenticationMiddleware, function(req, res) {
+	JournalEntryModel.find({user: req.user._id}, function(err, journalEntries) {
+		if(err) res.status(400).send(err);
+		if(req.user.head) {
+			// TODO
+			res.json({
+				user: req.user,
+				journalEntries
+			});
+		} else {
+			res.json({
+				user: req.user,
+				journalEntries
+			});
+		}
+	});
+});
 
 
-let JournalEntries = mongoose.model('JournalEntries');
 app.get('/api/journal-entries', authenticationMiddleware, function(req, res) {
-    JournalEntries.find(function(err, entries) {
-        if(err) res.status(400).send(err);
-        else if(!entries || entries.length == 0) res.send(204);
-        else res.json(entries);
-    });
+	JournalEntryModel.find(function(err, entries) {
+		if(err) res.status(400).send(err);
+		else if(!entries || entries.length == 0) res.send(204);
+		else res.json(entries);
+	});
 });
 app.post('/api/journal-entries', authenticationMiddleware, function(req, res) {
-	let newJournalEntry = req.body;
-	let journalEntries = new JournalEntries(newJournalEntry);
-	journalEntries.save(function(err, data) {
+	let entry = Object.assign({
+			user: req.user._id,
+			datetime: new Date().toJSON()
+		}, req.body)
+	;
+	new JournalEntryModel(entry).save(function(err, data) {
 		if(err) res.status(400).send(err);
 		else res.status(201).json(data);
 	});
 });
+
 
 
 
