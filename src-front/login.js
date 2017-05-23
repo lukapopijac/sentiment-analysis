@@ -9,7 +9,12 @@ export default connect(state => state)(class extends React.Component {
 		this.onSubmit = this.onSubmit.bind(this);
 	}
 	
-	onSubmit() {
+	componentDidMount() {
+		this._inputUsername.focus();
+	}
+	
+	onSubmit(e) {
+		e.preventDefault();
 		this.props.dispatch(
 			login(this._inputUsername.value, this._inputPassword.value)
 		);
@@ -20,7 +25,7 @@ export default connect(state => state)(class extends React.Component {
 			<div>
 				<h1 className="text-center">Sentiment Analysis</h1>
 				<hr/>
-				<form className="form-horizontal">
+				<form className="form-horizontal" onSubmit={this.onSubmit}>
 					<div className="form-group">
 						<label htmlFor="login-username" className="col-sm-3 control-label">Username</label>
 						<div className="col-sm-5">
@@ -34,7 +39,7 @@ export default connect(state => state)(class extends React.Component {
 						</div>
 					</div>
 					<div className="col-sm-8">
-						<button type="button" className="pull-right btn btn-primary" onClick={this.onSubmit}>Log In</button>
+						<button type="submit" className="pull-right btn btn-primary">Log In</button>
 					</div>
 				</form>
 			</div>

@@ -21,7 +21,7 @@ export default connect(state => state)(class extends React.Component {
 	render() {
 		let user = this.props.user;
 		let name = user ? user.name : '';
-		let avgSentiment = user ? user.avgSentiment : null;
+		let avgSentiment = this.props.avgSentiment;
 		
 		return !user ? <div></div>: (
 			<div>

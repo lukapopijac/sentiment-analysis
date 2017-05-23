@@ -1,11 +1,28 @@
 export function login(username, password) {
 	return function(dispatch) {
 		axios.post('/api/login', {username, password})
-			.then(_ => dispatch({type: 'LOGIN_FULFILLED'}))
+			.then(function(response) {
+				dispatch({type: 'LOGIN_FULFILLED'});
+				if(response.data.head) socketConnect(username, password, dispatch);
+			})
 			.catch(_ => dispatch({type: 'LOGIN_REJECTED'}))
 		;
 	};
 }
+
+
+function socketConnect(username, password, dispatch) {
+	let socket = new WebSocket('ws://localhost:5000/' + username + '/' + password);
+	
+	socket.onmessage = function(evt) {
+		let avgSentiment = JSON.parse(evt.data).avgSentiment;
+		if(avgSentiment != null) dispatch({
+			type: 'SET_AVERAGE_SENTIMENT',
+			payload: avgSentiment
+		});
+	}
+}
+
 
 export function logout() {
 	return function(dispatch) {

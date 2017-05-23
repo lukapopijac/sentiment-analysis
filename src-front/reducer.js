@@ -33,6 +33,11 @@ export default function(state={}, action) {
 			return Object.assign({}, state, {
 				journalEntryModalActive: action.payload
 			});
+			
+		case 'SET_AVERAGE_SENTIMENT':
+			return Object.assign({}, state, {
+				avgSentiment: action.payload
+			});
 	}
 	
 	return state;
