@@ -148,12 +148,20 @@ function calcAndSendAvgSentiment(socket, family_id) {
 			);
 		})
 		.then(function(journalEntriesUnflat) {
-			let avgSentiment = []
-				.concat.apply([], journalEntriesUnflat)  // flatten
-				.map(entry => entry.happinessLevel)
-				.reduce((acc, cur) => acc+cur, 0)
-			;
+			let journalEntries = [].concat.apply([], journalEntriesUnflat);
 			
+			let n = journalEntries.length;
+			
+			let avgSentiment = n==0 ? 0 : (
+				journalEntries
+					.map(entry => entry.text
+							.replace(/[,.:;!?\s]/g,' ')  // replace punctation and whitespaces
+							.trim()
+							.replace(/ +/g,' ')          // collapse multiple spaces
+							.split(' ')
+							.length * entry.happinessLevel)
+					.reduce((acc, cur) => acc+cur, 0) / n
+				).toFixed(3);
 			socket.send(JSON.stringify({avgSentiment}));
 		})
 		.catch(function(err) {
